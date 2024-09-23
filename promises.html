@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promises Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Promises Assignment</h1>
+        <button id="promiseButton">Click Me</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById('promiseButton').addEventListener('click', function () {
+            let outputElement = document.getElementById('output');
+            outputElement.innerHTML = "Loading...";
+
+            let fetchPromise = new Promise((resolve, reject) => {
+                let timeout = setTimeout(() => {
+                    reject("Operation timed out");
+                }, 5000);
+
+                fetch('https://dummyjson.com/posts')
+                    .then(response => response.json())
+                    .then(data => {
+                        clearTimeout(timeout);
+                        resolve(data.posts);
+                    })
+                    .catch(error => {
+                        clearTimeout(timeout);
+                        reject("Error fetching data");
+                    });
+            });
+
+            fetchPromise
+                .then(posts => {
+                    outputElement.innerHTML = "<strong>Data fetched successfully:</strong><br>";
+                    posts.forEach(post => {
+                        outputElement.innerHTML += `<p>${post.title}</p>`;
+                    });
+                })
+                .catch(error => {
+                    outputElement.innerHTML = `<p class="error">${error}</p>`;
+                });
+        });
+    </script>
+
+</body>
+</html>

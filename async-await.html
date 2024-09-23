@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async/Await Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a6268;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Async/Await Assignment</h1>
+        <button id="asyncButton">Click Me</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById('asyncButton').addEventListener('click', async function () {
+            let outputElement = document.getElementById('output');
+            outputElement.innerHTML = "Loading...";
+
+            try {
+                let posts = await fetchData();
+                outputElement.innerHTML = "<strong>Data fetched successfully:</strong><br>";
+                posts.forEach(post => {
+                    outputElement.innerHTML += `<p>${post.title}</p>`;
+                });
+            } catch (error) {
+                outputElement.innerHTML = `<p class="error">${error}</p>`;
+            }
+        });
+
+        async function fetchData() {
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject("Operation timed out"), 5000)
+            );
+
+            const fetchPromise = fetch('https://dummyjson.com/posts')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => data.posts);
+
+            return Promise.race([timeoutPromise, fetchPromise]);
+        }
+    </script>
+
+</body>
+</html>
